@@ -1,16 +1,55 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CharacterBase : MonoBehaviour
+public abstract class CharacterBase : MonoBehaviour,IDamageable
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] protected CharacterStat stat;
+    
+    protected float currentHp;
+    protected float currentStamina;
 
-    // Update is called once per frame
-    void Update()
+    public bool IsDead { get; protected set; }
+    public bool IsInvincible { get; protected set; }
+
+    protected Transform target;
+
+    public float MaxHp => stat.baseMaxHp;
+    public float CurrentHp => currentHp;
+    public float MaxStamina => stat.baseMaxStamina;
+    public float CurrentStamina => currentStamina;
+    public Transform Target => target;
+
+    public virtual void Initialize()
     {
-        
+        ResetStat();
+    }
+    public virtual void ResetStat()
+    {
+        currentHp = stat.baseMaxHp;
+        currentStamina = stat.baseMaxStamina;
+        IsDead = false;
+        IsInvincible = false;
+        target = null;
+    }
+    public virtual void TakeDamage(float damage)
+    {
+        if (IsDead || IsInvincible) return;
+        currentHp -= damage;
+        if (currentHp <= 0) Die();
+    }
+    public virtual void Heal(float amount)
+    {
+        if (IsDead) return;
+        if (amount <= 0) return;
+        currentHp = Mathf.Min(currentHp + amount, stat.baseMaxHp);
+    }
+    public virtual void Die()
+    {
+        if (IsDead) return;
+        IsDead = true;
+    }
+    public virtual void Attack() { }
+    public virtual void SetTarget(Transform target)
+    {
+        this.target = target;
     }
 }
