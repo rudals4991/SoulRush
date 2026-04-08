@@ -8,7 +8,8 @@ public class PlayerDeadState : PlayerState
     }
     public override void Enter()
     {
-
+        Debug.Log("Dead");
+        //player.Controller.Trigger("Dead");
     }
     public override void Update()
     {
@@ -17,5 +18,9 @@ public class PlayerDeadState : PlayerState
     public override void Exit()
     {
 
+    }
+    public override bool CanTransitionTo(PlayerStateType nextState)
+    {
+        return false;
     }
 }

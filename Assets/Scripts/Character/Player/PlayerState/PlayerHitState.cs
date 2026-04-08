@@ -8,7 +8,8 @@ public class PlayerHitState : PlayerState
     }
     public override void Enter()
     {
-
+        Debug.Log("Hit");
+        //player.Controller.Trigger("Hit");
     }
     public override void Update()
     {
@@ -17,5 +18,14 @@ public class PlayerHitState : PlayerState
     public override void Exit()
     {
 
+    }
+    public override bool CanTransitionTo(PlayerStateType nextState)
+    {
+        switch (nextState)
+        {
+            case PlayerStateType.Dead: return true;
+
+            default: return false;
+        }
     }
 }

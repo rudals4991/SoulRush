@@ -9,6 +9,7 @@ public class PlayerIDLEState : PlayerState
     public override void Enter()
     {
         Debug.Log("Enter IDLE");
+        player.Controller.Trigger("IDLE");
     }
     public override void Update()
     {
