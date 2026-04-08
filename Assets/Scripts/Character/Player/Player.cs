@@ -2,7 +2,9 @@
 
 public class Player : CharacterBase
 {
-    public Animator Animator { get; private set; }
+    Animator animator;
+    public PlayerAnimController Controller { get; private set; }
+    public PlayerInputReader InputReader { get; private set; }
     public PlayerMovement Movement { get; private set; }
     public PlayerGuard Guard { get; private set; }
     public PlayerAttack PlayerAttack { get; private set; }
@@ -19,14 +21,22 @@ public class Player : CharacterBase
     public PlayerDeadState DeadState { get; private set; }
     public PlayerHealState HealState { get; private set; }
 
+    public void Start()
+    {
+        Initialize();
+    }
     public override void Initialize()
     {
         base.Initialize();
-        Animator = GetComponent<Animator>();
-        Movement = GetComponent<PlayerMovement>();
-        Guard = GetComponent<PlayerGuard>();
-        PlayerAttack = GetComponent<PlayerAttack>();
-        Roll = GetComponent<PlayerRoll>();
+        animator = GetComponentInChildren<Animator>();
+        Controller = GetComponent<PlayerAnimController>();
+        InputReader = GetComponent<PlayerInputReader>();
+        Debug.Log($"Controller Null? {Controller == null}");
+        Debug.Log($"InputReader Null? {InputReader == null}");
+        //Movement = GetComponent<PlayerMovement>();
+        //Guard = GetComponent<PlayerGuard>();
+        //PlayerAttack = GetComponent<PlayerAttack>();
+        //Roll = GetComponent<PlayerRoll>();
 
         StateMachine = new PlayerStateMachine();
 
@@ -40,10 +50,43 @@ public class Player : CharacterBase
         HealState = new PlayerHealState(this, StateMachine);
 
         StateMachine.Initialize(IDLEState);
+
+        Controller.Initialize(animator);
     }
 
     private void Update()
     {
-        StateMachine.Update();
+        ControlInput();
+    }
+    private void ControlInput()
+    {
+        if (StateMachine.CurrentState == null) return;
+        if (StateMachine.CurrentState.StateType == PlayerStateType.Dead) return;
+        if (InputReader.AttackPressed)
+        {
+            StateMachine.ChangeState(AttackState);
+            return;
+        }
+        if (InputReader.RollPressed)
+        {
+            StateMachine.ChangeState(RollState);
+            return;
+        }
+        if (InputReader.HealPressed)
+        {
+            StateMachine.ChangeState(HealState);
+            return;
+        }
+        if (InputReader.IsGuardPressed)
+        {
+            StateMachine.ChangeState(GuardState);
+            return;
+        }
+        if (InputReader.MoveInput != Vector2.zero)
+        {
+            StateMachine.ChangeState(MoveState);
+            return;
+        }
+        StateMachine.ChangeState(IDLEState);
     }
 }

@@ -8,7 +8,8 @@ public class PlayerGuardState : PlayerState
     }
     public override void Enter()
     {
-
+        Debug.Log("Guard");
+        //player.Controller.Trigger("GuardStart");
     }
     public override void Update()
     {
@@ -17,5 +18,17 @@ public class PlayerGuardState : PlayerState
     public override void Exit()
     {
 
+    }
+    public override bool CanTransitionTo(PlayerStateType nextState)
+    {
+        switch (nextState)
+        {
+            case PlayerStateType.IDLE:
+            case PlayerStateType.Roll:
+            case PlayerStateType.Hit:
+            case PlayerStateType.Dead: return true;
+
+            default: return false;
+        }
     }
 }

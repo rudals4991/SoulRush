@@ -8,7 +8,8 @@ public class PlayerHealState : PlayerState
     }
     public override void Enter()
     {
-
+        Debug.Log("Heal");
+        //player.Controller.Trigger("Heal");
     }
     public override void Update()
     {
@@ -17,5 +18,15 @@ public class PlayerHealState : PlayerState
     public override void Exit()
     {
 
+    }
+    public override bool CanTransitionTo(PlayerStateType nextState)
+    {
+        switch (nextState)
+        {
+            case PlayerStateType.Hit:
+            case PlayerStateType.Dead: return true;
+
+            default: return false;
+        }
     }
 }
