@@ -24,7 +24,8 @@ public class PlayerAttackState : PlayerState
         switch (nextState)
         {
             case PlayerStateType.Hit:
-            case PlayerStateType.Dead: return true;
+            case PlayerStateType.Dead:
+            case PlayerStateType.IDLE: return true;
 
             default: return false;
         }

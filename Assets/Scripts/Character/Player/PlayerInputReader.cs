@@ -49,11 +49,4 @@ public class PlayerInputReader : MonoBehaviour
     {
         input.Disable();
     }
-    private void Update()
-    {
-        if (AttackPressed) Debug.Log("Attack");
-        if (RollPressed) Debug.Log("Roll");
-        if (HealPressed) Debug.Log("Heal");
-        if (IsGuardPressed) Debug.Log("Guard Holding");
-    }
 }
