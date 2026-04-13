@@ -23,7 +23,8 @@ public class PlayerHitState : PlayerState
     {
         switch (nextState)
         {
-            case PlayerStateType.Dead: return true;
+            case PlayerStateType.Dead:
+            case PlayerStateType.IDLE: return true;
 
             default: return false;
         }

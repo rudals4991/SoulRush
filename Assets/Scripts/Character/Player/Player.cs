@@ -3,12 +3,15 @@
 public class Player : CharacterBase
 {
     Animator animator;
+    Rigidbody rb;
+    Camera cam; //추후 주입
     public PlayerAnimController Controller { get; private set; }
     public PlayerInputReader InputReader { get; private set; }
     public PlayerMovement Movement { get; private set; }
     public PlayerGuard Guard { get; private set; }
     public PlayerAttack PlayerAttack { get; private set; }
     public PlayerRoll Roll { get; private set; }
+    public PlayerLockOn LockOn { get; private set; }
 
     public PlayerStateMachine StateMachine { get; private set; }
 
@@ -29,11 +32,12 @@ public class Player : CharacterBase
     {
         base.Initialize();
         animator = GetComponentInChildren<Animator>();
+        rb = GetComponent<Rigidbody>();
+        cam = Camera.main;
         Controller = GetComponent<PlayerAnimController>();
         InputReader = GetComponent<PlayerInputReader>();
-        Debug.Log($"Controller Null? {Controller == null}");
-        Debug.Log($"InputReader Null? {InputReader == null}");
-        //Movement = GetComponent<PlayerMovement>();
+        Movement = GetComponent<PlayerMovement>();
+        LockOn = GetComponent<PlayerLockOn>();
         //Guard = GetComponent<PlayerGuard>();
         //PlayerAttack = GetComponent<PlayerAttack>();
         //Roll = GetComponent<PlayerRoll>();
@@ -52,16 +56,30 @@ public class Player : CharacterBase
         StateMachine.Initialize(IDLEState);
 
         Controller.Initialize(animator);
+        Movement.Initialize(rb, cam.transform, stat.baseMoveSpeed, 12f);
+        LockOn.Initialize(this,LayerMask.GetMask("Monster"));
     }
 
     private void Update()
     {
+        if (StateMachine == null) return;
         ControlInput();
+        LockOn?.ValidateTarget();
+        StateMachine.Update();
+    }
+    private void FixedUpdate()
+    {
+        Movement?.FixedTick();
     }
     private void ControlInput()
     {
         if (StateMachine.CurrentState == null) return;
         if (StateMachine.CurrentState.StateType == PlayerStateType.Dead) return;
+
+        if (InputReader.LockOnPressed)
+        {
+            LockOn?.ToggleLockOn();
+        }
         if (InputReader.AttackPressed)
         {
             StateMachine.ChangeState(AttackState);
@@ -82,7 +100,7 @@ public class Player : CharacterBase
             StateMachine.ChangeState(GuardState);
             return;
         }
-        if (InputReader.MoveInput != Vector2.zero)
+        if (InputReader.MoveInput.sqrMagnitude > 0.01f)
         {
             StateMachine.ChangeState(MoveState);
             return;

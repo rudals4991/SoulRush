@@ -3,6 +3,7 @@
 public abstract class CharacterBase : MonoBehaviour,IDamageable
 {
     [SerializeField] protected CharacterStat stat;
+    [SerializeField] protected Transform lockOnPoint;
     
     protected float currentHp;
     protected float currentStamina;
@@ -17,7 +18,20 @@ public abstract class CharacterBase : MonoBehaviour,IDamageable
     public float MaxStamina => stat.baseMaxStamina;
     public float CurrentStamina => currentStamina;
     public Transform Target => target;
+    public Transform LockOnPoint
+    {
+        get
+        {
+            if (lockOnPoint != null)
+                return lockOnPoint;
 
+            return transform;
+        }
+    }
+    public virtual bool CanBeLockedOn()
+    {
+        return gameObject.activeInHierarchy;
+    }
     public virtual void Initialize()
     {
         ResetStat();
