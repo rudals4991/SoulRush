@@ -9,22 +9,33 @@ public class PlayerGuardState : PlayerState
     public override void Enter()
     {
         Debug.Log("Guard");
-        //player.Controller.Trigger("GuardStart");
+        player.Movement.StopMove();
+        player.Guard.StartGuard();
+        player.Controller.Bool("IsGuard", true);
     }
     public override void Update()
     {
+        player.Movement.StopMove();
 
+        if (!player.InputReader.IsGuardPressed)
+        {
+            Debug.Log("Guard released -> Change to IDLE");
+            stateMachine.ChangeState(player.IDLEState);
+            return;
+        }
     }
     public override void Exit()
     {
-
+        Debug.Log("Guard Exit");
+        player.Guard.StopGuard();
+        player.Controller.Bool("IsGuard", false);
+        Debug.Log("Animator IsGuard = false");
     }
     public override bool CanTransitionTo(PlayerStateType nextState)
     {
         switch (nextState)
         {
             case PlayerStateType.IDLE:
-            case PlayerStateType.Roll:
             case PlayerStateType.Hit:
             case PlayerStateType.Dead: return true;
 

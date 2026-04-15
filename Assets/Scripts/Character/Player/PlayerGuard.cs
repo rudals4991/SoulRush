@@ -1,16 +1,19 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerGuard : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public bool IsGuarding { get; private set; }
 
-    // Update is called once per frame
-    void Update()
+    public void StartGuard()
     {
-        
+        IsGuarding = true;
+    }
+    public void StopGuard()
+    {
+        IsGuarding = false;
+    }
+    public bool CanGuard()
+    {
+        return IsGuarding;
     }
 }

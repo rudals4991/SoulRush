@@ -11,6 +11,7 @@ public class Player : CharacterBase
     public PlayerGuard Guard { get; private set; }
     public PlayerAttack PlayerAttack { get; private set; }
     public PlayerRoll Roll { get; private set; }
+    public PlayerHeal PlayerHeal { get; private set; }
     public PlayerLockOn LockOn { get; private set; }
 
     public PlayerStateMachine StateMachine { get; private set; }
@@ -38,9 +39,10 @@ public class Player : CharacterBase
         InputReader = GetComponent<PlayerInputReader>();
         Movement = GetComponent<PlayerMovement>();
         LockOn = GetComponent<PlayerLockOn>();
-        //Guard = GetComponent<PlayerGuard>();
-        //PlayerAttack = GetComponent<PlayerAttack>();
-        //Roll = GetComponent<PlayerRoll>();
+        Guard = GetComponent<PlayerGuard>();
+        PlayerAttack = GetComponent<PlayerAttack>();
+        Roll = GetComponent<PlayerRoll>();
+        PlayerHeal = GetComponent<PlayerHeal>();
 
         StateMachine = new PlayerStateMachine();
 
@@ -53,11 +55,11 @@ public class Player : CharacterBase
         DeadState = new PlayerDeadState(this, StateMachine);
         HealState = new PlayerHealState(this, StateMachine);
 
-        StateMachine.Initialize(IDLEState);
-
         Controller.Initialize(animator);
         Movement.Initialize(rb, cam.transform, stat.baseMoveSpeed, 12f);
-        LockOn.Initialize(this,LayerMask.GetMask("Monster"));
+        LockOn.Initialize(this, LayerMask.GetMask("Monster"));
+
+        StateMachine.Initialize(IDLEState);
     }
 
     private void Update()
@@ -75,36 +77,14 @@ public class Player : CharacterBase
     {
         if (StateMachine.CurrentState == null) return;
         if (StateMachine.CurrentState.StateType == PlayerStateType.Dead) return;
-
         if (InputReader.LockOnPressed)
         {
             LockOn?.ToggleLockOn();
         }
-        if (InputReader.AttackPressed)
-        {
-            StateMachine.ChangeState(AttackState);
-            return;
-        }
-        if (InputReader.RollPressed)
-        {
-            StateMachine.ChangeState(RollState);
-            return;
-        }
-        if (InputReader.HealPressed)
-        {
-            StateMachine.ChangeState(HealState);
-            return;
-        }
-        if (InputReader.IsGuardPressed)
-        {
-            StateMachine.ChangeState(GuardState);
-            return;
-        }
-        if (InputReader.MoveInput.sqrMagnitude > 0.01f)
-        {
-            StateMachine.ChangeState(MoveState);
-            return;
-        }
-        StateMachine.ChangeState(IDLEState);
+    }
+    public void OnGuardHit()
+    {
+        if (!Guard.IsGuarding) return;
+        Controller.Trigger("GuardHit");
     }
 }
