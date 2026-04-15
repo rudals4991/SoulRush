@@ -1,15 +1,22 @@
 ﻿using UnityEngine;
 
+
+
 public class PlayerMovement : MonoBehaviour
 {
+    public enum RotationMode
+    {
+        None, MoveDirection, LockOnTarget
+    }
     Rigidbody rb;
     Transform cam;
     float walkSpeed;
 
     Vector2 moveInput;
-    bool isRunning, isLockOn;
+    bool isRunning;
     Transform lockOnPoint;
     float rotationSpeed;
+    RotationMode rotationMode;
     public void Initialize(Rigidbody rb, Transform camTransform, float baseSpeed, float rotationSpeed)
     { 
         this.rb = rb;
@@ -17,18 +24,18 @@ public class PlayerMovement : MonoBehaviour
         walkSpeed = baseSpeed;
         this.rotationSpeed = rotationSpeed;
     }
-    public void SetMoveInput(Vector2 input, bool running, bool lockOn, Transform targetPoint)
-    { 
+    public void SetMoveInput(Vector2 input, bool running, RotationMode rotationMode, Transform targetPoint)
+    {
         moveInput = input;
         isRunning = running;
-        isLockOn = lockOn;
+        this.rotationMode = rotationMode;
         lockOnPoint = targetPoint;
     }
     public void StopMove()
     {
         moveInput = Vector2.zero;
         isRunning = false;
-        isLockOn = false;
+        rotationMode = RotationMode.None;
         lockOnPoint = null;
     }
     public void FixedTick()
@@ -39,17 +46,17 @@ public class PlayerMovement : MonoBehaviour
         float moveSpeed = CalculateMoveSpeed();
         Vector3 nextPosition = rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(nextPosition);
-        if (isLockOn)
+        switch (rotationMode)
         {
-            RotateToLockOnPoint();
-            return;
+            case RotationMode.LockOnTarget: RotateToLockOnPoint(); break;
+            case RotationMode.MoveDirection: RotateToMoveDirection(moveDirection); break;
+            case RotationMode.None: break;
         }
-        RotateToMoveDirection(moveDirection);
     }
     private float CalculateMoveSpeed()
     {
         float speed = walkSpeed;
-        if (isLockOn) return speed * 0.8f;
+        if (rotationMode == RotationMode.LockOnTarget) return speed * 0.8f;
         if (isRunning) return speed * 1.5f;
         return speed;
     }

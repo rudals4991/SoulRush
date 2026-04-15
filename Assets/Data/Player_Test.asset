@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player_Test
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStat
   baseMaxHp: 100
-  baseMoveSpeed: 5
+  baseMoveSpeed: 2
   baseMaxStamina: 100
   staminaRegen: 20
   attackDamage: 10
