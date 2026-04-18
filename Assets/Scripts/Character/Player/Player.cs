@@ -58,6 +58,7 @@ public class Player : CharacterBase
         Controller.Initialize(animator);
         Movement.Initialize(rb, cam.transform, stat.baseMoveSpeed, 12f);
         LockOn.Initialize(this, LayerMask.GetMask("Monster"));
+        Roll.Initialize(rb, 1.4f);
 
         StateMachine.Initialize(IDLEState);
     }
@@ -71,6 +72,7 @@ public class Player : CharacterBase
     }
     private void FixedUpdate()
     {
+        if (StateMachine.CurrentState.StateType == PlayerStateType.Roll) return;
         Movement?.FixedTick();
     }
     private void ControlInput()

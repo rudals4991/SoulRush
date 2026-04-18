@@ -12,6 +12,30 @@ public class PlayerMoveState : PlayerState
     }
     public override void Update()
     {
+        if (player.InputReader.AttackPressed)
+        {
+            stateMachine.ChangeState(player.AttackState);
+            return;
+        }
+
+        if (player.InputReader.RollPressed)
+        {
+            stateMachine.ChangeState(player.RollState);
+            return;
+        }
+
+        if (player.InputReader.HealPressed)
+        {
+            stateMachine.ChangeState(player.HealState);
+            return;
+        }
+
+        if (player.InputReader.IsGuardPressed)
+        {
+            stateMachine.ChangeState(player.GuardState);
+            return;
+        }
+
         Vector2 moveInput = player.InputReader.MoveInput;
 
         if (moveInput.sqrMagnitude <= 0.01f)
@@ -26,9 +50,12 @@ public class PlayerMoveState : PlayerState
         Transform targetPoint = isLockedOn ? player.LockOn.CurrentLockOnPoint : null;
         bool isRunning = !isLockedOn && player.InputReader.IsRunPressed;
 
-        PlayerMovement.RotationMode rotationMode = isLockedOn ? PlayerMovement.RotationMode.LockOnTarget
+        PlayerMovement.RotationMode rotationMode = isLockedOn
+            ? PlayerMovement.RotationMode.LockOnTarget
             : PlayerMovement.RotationMode.MoveDirection;
+
         player.Movement.SetMoveInput(moveInput, isRunning, rotationMode, targetPoint);
+
         float speed = isRunning ? 1f : 0.5f;
         player.Controller.Float("Speed", speed);
     }
@@ -42,9 +69,12 @@ public class PlayerMoveState : PlayerState
         switch (nextState)
         {
             case PlayerStateType.IDLE:
+            case PlayerStateType.Guard:
+            case PlayerStateType.Attack:
+            case PlayerStateType.Roll:
             case PlayerStateType.Hit:
             case PlayerStateType.Dead:
-                return true;
+            case PlayerStateType.Heal: return true;
 
             default:
                 return false;
