@@ -38,10 +38,6 @@ public class PlayerAttackState : PlayerState
                 }
             }
         }
-        else if (!player.Controller.IsInTransition())
-        {
-            stateMachine.ChangeState(player.IDLEState);
-        }
     }
     public override void Exit()
     {
