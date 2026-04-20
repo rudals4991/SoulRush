@@ -13,10 +13,10 @@ public abstract class CharacterBase : MonoBehaviour,IDamageable
 
     protected Transform target;
 
-    public float MaxHp => stat.baseMaxHp;
-    public float CurrentHp => currentHp;
-    public float MaxStamina => stat.baseMaxStamina;
-    public float CurrentStamina => currentStamina;
+    public virtual float MaxHp => stat.baseMaxHp;
+    public virtual float CurrentHp => currentHp;
+    public virtual float MaxStamina => stat.baseMaxStamina;
+    public virtual float CurrentStamina => currentStamina;
     public Transform Target => target;
     public Transform LockOnPoint
     {
@@ -44,7 +44,7 @@ public abstract class CharacterBase : MonoBehaviour,IDamageable
         IsInvincible = false;
         target = null;
     }
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, CharacterBase attacker)
     {
         if (IsDead || IsInvincible) return;
         currentHp -= damage;
@@ -54,7 +54,7 @@ public abstract class CharacterBase : MonoBehaviour,IDamageable
     {
         if (IsDead) return;
         if (amount <= 0) return;
-        currentHp = Mathf.Min(currentHp + amount, stat.baseMaxHp);
+        currentHp = Mathf.Min(currentHp + amount, MaxHp);
     }
     public virtual void Die()
     {

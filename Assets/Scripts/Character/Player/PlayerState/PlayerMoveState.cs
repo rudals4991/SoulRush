@@ -14,28 +14,30 @@ public class PlayerMoveState : PlayerState
     {
         if (player.InputReader.AttackPressed)
         {
-            stateMachine.ChangeState(player.AttackState);
-            return;
+            if (player.PlayerAttack.TryUseAttackStamina(1))
+            {
+                stateMachine.ChangeState(player.AttackState);
+                return;
+            }
         }
-
         if (player.InputReader.RollPressed)
         {
             stateMachine.ChangeState(player.RollState);
             return;
         }
-
         if (player.InputReader.HealPressed)
         {
             stateMachine.ChangeState(player.HealState);
             return;
         }
-
         if (player.InputReader.IsGuardPressed)
         {
-            stateMachine.ChangeState(player.GuardState);
-            return;
+            if (player.Guard.CanStartGuard())
+            {
+                stateMachine.ChangeState(player.GuardState);
+                return;
+            }
         }
-
         Vector2 moveInput = player.InputReader.MoveInput;
 
         if (moveInput.sqrMagnitude <= 0.01f)

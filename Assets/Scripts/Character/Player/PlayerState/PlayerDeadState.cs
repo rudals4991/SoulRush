@@ -9,6 +9,7 @@ public class PlayerDeadState : PlayerState
     public override void Enter()
     {
         Debug.Log("Dead");
+        player.Die();
         player.Movement.StopMove();
         player.Roll.EndRoll();
         player.Guard.StopGuard();
