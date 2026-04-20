@@ -2,9 +2,12 @@
 
 public class Player : CharacterBase
 {
+    public CharacterStatRuntime StatRuntime { get; private set; }
     Animator animator;
     Rigidbody rb;
     Camera cam; //추후 주입
+    [SerializeField] AttackHitBox attackHitBox;
+    #region Player Components
     public PlayerAnimController Controller { get; private set; }
     public PlayerInputReader InputReader { get; private set; }
     public PlayerMovement Movement { get; private set; }
@@ -13,7 +16,10 @@ public class Player : CharacterBase
     public PlayerRoll Roll { get; private set; }
     public PlayerHeal PlayerHeal { get; private set; }
     public PlayerLockOn LockOn { get; private set; }
+    public PlayerStamina Stamina { get; private set; }
+    #endregion
 
+    #region Player States
     public PlayerStateMachine StateMachine { get; private set; }
 
     public PlayerIDLEState IDLEState { get; private set; }
@@ -24,6 +30,7 @@ public class Player : CharacterBase
     public PlayerHitState HitState { get; private set; }
     public PlayerDeadState DeadState { get; private set; }
     public PlayerHealState HealState { get; private set; }
+    #endregion
 
     public void Start()
     {
@@ -31,7 +38,8 @@ public class Player : CharacterBase
     }
     public override void Initialize()
     {
-        base.Initialize();
+        StatRuntime = GetComponent<CharacterStatRuntime>();
+        StatRuntime.Initialize(stat);
         animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
         cam = Camera.main;
@@ -43,6 +51,9 @@ public class Player : CharacterBase
         PlayerAttack = GetComponent<PlayerAttack>();
         Roll = GetComponent<PlayerRoll>();
         PlayerHeal = GetComponent<PlayerHeal>();
+        Stamina = GetComponent<PlayerStamina>();
+
+        ResetStat();
 
         StateMachine = new PlayerStateMachine();
 
@@ -58,16 +69,22 @@ public class Player : CharacterBase
         Controller.Initialize(animator);
         Movement.Initialize(rb, cam.transform, stat.baseMoveSpeed, 12f);
         LockOn.Initialize(this, LayerMask.GetMask("Monster"));
-        Roll.Initialize(rb, 1.4f);
+        Guard.Initialize(this, stat, Stamina);
+        PlayerAttack.Initialize(this, attackHitBox, stat, Stamina);
+        Roll.Initialize(rb, 1.4f, Stamina);
+        attackHitBox?.Initialize(this);
 
         StateMachine.Initialize(IDLEState);
     }
+    public override float MaxHp => StatRuntime != null ? StatRuntime.GetMaxHp() : base.MaxHp;
+    public override float CurrentHp => StatRuntime != null ? StatRuntime.CurrentHp : base.CurrentHp;
 
     private void Update()
     {
         if (StateMachine == null) return;
         ControlInput();
         LockOn?.ValidateTarget();
+        Stamina?.Tick(Time.deltaTime);
         StateMachine.Update();
     }
     private void FixedUpdate()
@@ -90,19 +107,28 @@ public class Player : CharacterBase
         if (!Guard.IsGuarding) return;
         Controller.Trigger("GuardHit");
     }
-    public override void TakeDamage(float damage)
+    public override void TakeDamage(float damage, CharacterBase attacker)
     {
         if (StateMachine.CurrentState.StateType == PlayerStateType.Dead) return;
         if (Roll.IsInvincible) return;
         if (Guard.IsGuarding)
         {
+            float guardedDamage = Guard.ApplyGuard(damage);
             OnGuardHit();
+            StatRuntime.TakeDamage(guardedDamage);
+            if (StatRuntime.CurrentHp <= 0f)
+            {
+                Die();
+                StateMachine.ChangeState(DeadState);
+                return;
+            }
+            if (Guard.IsBroken()) StateMachine.ChangeState(HitState);
             return;
         }
-        currentHp -= damage;
-        if (currentHp <= 0)
+        StatRuntime.TakeDamage(damage);
+        if (StatRuntime.CurrentHp <= 0f)
         {
-            currentHp = 0f;
+            Die();
             StateMachine.ChangeState(DeadState);
             return;
         }
@@ -110,7 +136,24 @@ public class Player : CharacterBase
     }
     public override void Heal(float amount)
     {
-        currentHp += amount;
-        if(currentHp > stat.baseMaxHp) currentHp = stat.baseMaxHp;
+        if (IsDead) return;
+        if (amount <= 0f) return;
+        StatRuntime.Heal(amount);
+    }
+    public void EnableAttackHitBox()
+    {
+        PlayerAttack?.EnableHitBox();
+    }
+    public void DisableAttackHitBox()
+    {
+        PlayerAttack?.DisableHitBox();
+    }
+    public override void ResetStat()
+    {
+        base.ResetStat();
+        StatRuntime.Initialize(stat);
+        Stamina.Initialize(stat);
+        IsDead = false;
+        IsInvincible = false;
     }
 }

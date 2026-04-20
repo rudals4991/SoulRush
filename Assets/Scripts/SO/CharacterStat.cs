@@ -13,6 +13,9 @@ public class CharacterStat : ScriptableObject
     public float baseMaxStamina;
     public float staminaRegen;
 
-    [Header("캐릭터 데미지")]
-    public float attackDamage;
+    [Header("캐릭터 기본 공격 데미지")]
+    public float baseAttackDamage;
+
+    [Header("캐릭터 기본 가드 감소율")]
+    public float baseGuardPercent;
 }

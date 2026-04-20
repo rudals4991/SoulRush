@@ -16,4 +16,5 @@ MonoBehaviour:
   baseMoveSpeed: 2
   baseMaxStamina: 100
   staminaRegen: 20
-  attackDamage: 10
+  baseAttackDamage: 10
+  baseGuardPercent: 70

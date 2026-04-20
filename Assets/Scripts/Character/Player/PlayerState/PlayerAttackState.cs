@@ -19,24 +19,17 @@ public class PlayerAttackState : PlayerState
         HandleComboInput();
 
         string currentAttackState = GetCurrentAttackStateName();
-        if (string.IsNullOrEmpty(currentAttackState)) return;
-
-        // 현재 재생 중인 애니메이션 정보 가져오기
-        var stateInfo = player.Controller.GetCurrentStateInfo();
-
-        if (stateInfo.IsName(currentAttackState))
+        if (string.IsNullOrEmpty(currentAttackState)) return; 
+        AnimatorStateInfo stateInfo = player.Controller.GetCurrentStateInfo();
+        if (!stateInfo.IsName(currentAttackState)) return;
+        if (stateInfo.normalizedTime >= 0.8f)
         {
-            if (stateInfo.normalizedTime >= 0.8f)
+            if (player.PlayerAttack.IsNextCombo)
             {
-                if (player.PlayerAttack.IsNextCombo)
-                {
-                    TryNextComboOrEnd();
-                }
-                else if (stateInfo.normalizedTime >= 0.95f)
-                {
-                    stateMachine.ChangeState(player.IDLEState);
-                }
+                TryNextComboOrEnd();
+                return;
             }
+            if (stateInfo.normalizedTime >= 0.95f) stateMachine.ChangeState(player.IDLEState);
         }
     }
     public override void Exit()
@@ -54,20 +47,31 @@ public class PlayerAttackState : PlayerState
             default: return false;
         }
     }
-    void TryNextComboOrEnd()
-    {
-        if (player.PlayerAttack.IsNextCombo && player.PlayerAttack.CurrentCombo < player.PlayerAttack.maxCombo)
-        {
-            player.PlayerAttack.StartNextCombo();
-            PlayCurrentAttack();
-            return;
-        }
-        stateMachine.ChangeState(player.IDLEState);
-    }
     void HandleComboInput()
     {
         if (!player.InputReader.AttackPressed) return;
         player.PlayerAttack.QueueNextCombo();
+    }
+    void TryNextComboOrEnd()
+    {
+        if (!player.PlayerAttack.IsNextCombo)
+        {
+            stateMachine.ChangeState(player.IDLEState);
+            return;
+        }
+        if (player.PlayerAttack.CurrentCombo >= player.PlayerAttack.maxCombo)
+        {
+            stateMachine.ChangeState(player.IDLEState);
+            return;
+        }
+        int nextCombo = player.PlayerAttack.CurrentCombo + 1;
+        if (!player.PlayerAttack.TryUseAttackStamina(nextCombo))
+        {
+            stateMachine.ChangeState(player.IDLEState);
+            return;
+        }
+        player.PlayerAttack.StartNextCombo();
+        PlayCurrentAttack();
     }
     void PlayCurrentAttack()
     {
