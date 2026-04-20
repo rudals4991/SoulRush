@@ -1,16 +1,18 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerHeal : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public int CurrentHealCount { get; private set; } = 3;
+    public float HealAmount { get; private set; } = 30f;
+
+    public bool CanHeal()
     {
-        
+        return CurrentHealCount > 0;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UseHeal()
     {
-        
+        if (CurrentHealCount <= 0) return;
+        CurrentHealCount--;
     }
 }

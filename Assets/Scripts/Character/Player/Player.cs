@@ -72,7 +72,8 @@ public class Player : CharacterBase
     }
     private void FixedUpdate()
     {
-        if (StateMachine.CurrentState.StateType == PlayerStateType.Roll) return;
+        if (StateMachine.CurrentState.StateType == PlayerStateType.Roll ||
+            StateMachine.CurrentState.StateType == PlayerStateType.Dead) return;
         Movement?.FixedTick();
     }
     private void ControlInput()
@@ -88,5 +89,28 @@ public class Player : CharacterBase
     {
         if (!Guard.IsGuarding) return;
         Controller.Trigger("GuardHit");
+    }
+    public override void TakeDamage(float damage)
+    {
+        if (StateMachine.CurrentState.StateType == PlayerStateType.Dead) return;
+        if (Roll.IsInvincible) return;
+        if (Guard.IsGuarding)
+        {
+            OnGuardHit();
+            return;
+        }
+        currentHp -= damage;
+        if (currentHp <= 0)
+        {
+            currentHp = 0f;
+            StateMachine.ChangeState(DeadState);
+            return;
+        }
+        StateMachine.ChangeState(HitState);
+    }
+    public override void Heal(float amount)
+    {
+        currentHp += amount;
+        if(currentHp > stat.baseMaxHp) currentHp = stat.baseMaxHp;
     }
 }

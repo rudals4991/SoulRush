@@ -9,7 +9,10 @@ public class PlayerDeadState : PlayerState
     public override void Enter()
     {
         Debug.Log("Dead");
-        //player.Controller.Trigger("Dead");
+        player.Movement.StopMove();
+        player.Roll.EndRoll();
+        player.Guard.StopGuard();
+        player.Controller.Trigger("Dead");
     }
     public override void Update()
     {
