@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5110bcad968d544ba7edd507882b3b, type: 3}
+  m_Name: Boss_Test
+  m_EditorClassIdentifier: Assembly-CSharp::BossStat
+  baseMaxHp: 300
+  baseMoveSpeed: 2.5
+  baseMaxStamina: 0
+  staminaRegen: 0
+  baseAttackDamage: 30
+  baseGuardPercent: 0
+  attackCooldown: 2
+  attackRange: 0
+  groggyDuration: 3
+  stopDistance: 0
+  maxChaseTime: 3
+  firstGroggyPercent: 0.7
+  secondGroggyPercent: 0.3
+  Phase2Percent: 0.5
