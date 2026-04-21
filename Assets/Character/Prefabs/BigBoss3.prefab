@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BigBoss3
       objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: fe5bc2f60e6b44345a533d6d931a3c9f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 3d799c94f94ec6844bebd67cd61b80e8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
