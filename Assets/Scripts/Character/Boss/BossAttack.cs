@@ -7,9 +7,13 @@ public class BossAttack : MonoBehaviour
     { 
         boss = owner;
     }
-    public void TryAttack()
+    public void ExecuteAttack()
     {
-        if (!boss.CanAttack()) return;
-        boss.StartAttack();
+        if (boss == null) return;
+        boss.Movement?.Stop();
+        boss.MarkAttackTime();
+        // 공격 애니메이션 실행
+        // 예: boss.Animator.SetTrigger("Attack");
+        // 실제 데미지 판정은 Animation Event에서 히트박스 On/Off 처리
     }
 }

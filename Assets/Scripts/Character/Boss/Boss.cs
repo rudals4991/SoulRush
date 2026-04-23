@@ -2,15 +2,16 @@
 
 public class Boss : CharacterBase
 {
-    [SerializeField]float detectRange = 20f;
+    [SerializeField] private float detectRange = 20f;
+    [SerializeField] private float phaseChangeDuration = 2f;
+
     protected BossStat bossStat;
 
-    public Rigidbody Rb { get; private set; }
-    public Animator Animator { get; private set; }
-    public BossMovement Movement { get; private set; }
-    public BossAttack BossAttack { get; private set; }
+    protected float lastAttackTime;
+    protected float chaseStartTime;
+    protected float groggyStartTime;
+    protected float phaseChangeStartTime;
 
-    protected bool hasTarget;
     protected bool isPhase2;
     protected bool isGroggy;
     protected bool isPhaseChange;
@@ -18,9 +19,11 @@ public class Boss : CharacterBase
     protected bool hasTriggeredFirstGroggy;
     protected bool hasTriggeredSecondGroggy;
     protected bool hasTriggeredPhase2;
-
-    protected float lastAttackTime;
-    protected float chaseStartTime;
+    public Rigidbody Rb { get; private set; }
+    public Animator Animator { get; private set; }
+    public BossBT BT { get; private set; }
+    public BossMovement Movement { get; private set; }
+    public BossAttack BossAttack { get; private set; }
 
     public float DetectRange => detectRange;
     public float AttackRange => bossStat.attackRange;
@@ -28,10 +31,17 @@ public class Boss : CharacterBase
     public float GroggyDuration => bossStat.groggyDuration;
     public float StopDistance => bossStat.stopDistance;
     public float MaxChaseTime => bossStat.maxChaseTime;
+
     public BossStat BossStat => bossStat;
+
+    public bool IsGroggy => isGroggy;
+    public bool IsPhaseChanging => isPhaseChange;
+    public bool IsPhase2 => isPhase2;
+
     protected void Awake()
     {
         bossStat = stat as BossStat;
+        Initialize();
     }
     public override void Initialize()
     {
@@ -39,37 +49,47 @@ public class Boss : CharacterBase
         Animator = GetComponent<Animator>();
         Movement = GetComponent<BossMovement>();
         BossAttack = GetComponent<BossAttack>();
+        BT = GetComponent<BossBT>();
         Movement.Initialize(this, Rb);
         BossAttack.Initialize(this);
+        BT.Initialize(this);
     }
     public bool HasTarget()
     {
         return target != null;
     }
+    public void TryFindTarget(Transform player)
+    {
+        if (target != null || player == null) return;
+        float distance = Vector3.Distance(transform.position, player.position);
+        if (distance <= DetectRange) target = player;
+    }
     public bool IsTargetInDetectRange()
     {
         if (target == null) return false;
-        float distance = Vector3.Distance(transform.position, target.position);
-        return distance <= DetectRange;
+        return Vector3.Distance(transform.position, target.position) <= DetectRange;
     }
     public bool IsTargetInAttackRange()
     {
         if (target == null) return false;
-        float distance = Vector3.Distance(transform.position, target.position);
-        return distance <= AttackRange;
+        return Vector3.Distance(transform.position, target.position) <= AttackRange;
     }
     public bool IsTargetInStopDistance()
     {
         if (target == null) return false;
-        float distance = Vector3.Distance(transform.position, target.position);
-        return distance <= StopDistance;
+        return Vector3.Distance(transform.position, target.position) <= StopDistance;
     }
     public bool CanAttack()
     {
         return Time.time >= lastAttackTime + AttackCooldown;
     }
+    public void MarkAttackTime()
+    {
+        lastAttackTime = Time.time;
+    }
     public float GetHpRatio()
     {
+        if (bossStat == null || bossStat.baseMaxHp <= 0f) return 0f;
         return currentHp / bossStat.baseMaxHp;
     }
     public bool CanTriggerFirstGroggy()
@@ -77,73 +97,72 @@ public class Boss : CharacterBase
         if (hasTriggeredFirstGroggy) return false;
         return GetHpRatio() <= bossStat.firstGroggyPercent;
     }
-    public bool CanTriggerPhase2()
-    {
-        if (hasTriggeredPhase2) return false;
-        return GetHpRatio() <= bossStat.phase2Percent;
-    }
     public bool CanTriggerSecondGroggy()
     {
         if (hasTriggeredSecondGroggy) return false;
         return GetHpRatio() <= bossStat.secondGroggyPercent;
     }
-    public void TryFindTarget(Transform player)
+    public bool CanTriggerPhase2()
     {
-        if (target != null) return;
-        float distance = Vector3.Distance(transform.position, player.position);
-        if (distance <= DetectRange) target = player;
+        if (hasTriggeredPhase2) return false;
+        return GetHpRatio() <= bossStat.phase2Percent;
     }
-    public void EnterGroggy()
+    public void SetFirstGroggyTriggered()
+    {
+        hasTriggeredFirstGroggy = true;
+    }
+    public void SetSecondGroggyTriggered()
+    {
+        hasTriggeredSecondGroggy = true;
+    }
+    public void SetPhase2Triggered()
+    {
+        hasTriggeredPhase2 = true;
+    }
+    public void EnterGroggyState()
     {
         isGroggy = true;
-        Movement.Stop();
-        Invoke(nameof(ExitGroggy), GroggyDuration);
+        groggyStartTime = Time.time;
+        Movement?.Stop();
     }
-    void ExitGroggy()
+    public void ExitGroggyState()
     {
         isGroggy = false;
+        groggyStartTime = 0f;
     }
-    public void EnterPhase2()
+    public bool IsGroggyFinished()
+    {
+        if (!isGroggy) return true;
+        return Time.time >= groggyStartTime + GroggyDuration;
+    }
+    public void EnterPhaseChangeState()
     {
         isPhaseChange = true;
-        Movement.Stop();
-        // Animator.SetTrigger("Phase2");
-        Invoke(nameof(ExitPhaseChange), 2f);
+        phaseChangeStartTime = Time.time;
+        Movement?.Stop();
     }
-    private void ExitPhaseChange()
+    public void ExitPhaseChangeState()
     {
         isPhaseChange = false;
         isPhase2 = true;
+        phaseChangeStartTime = 0f;
     }
-    public void StartAttack()
+    public bool IsPhaseChangeFinished()
     {
-        lastAttackTime = Time.time;
-        Movement.Stop();
-        // Animator.Trigger("Attack");
+        if (!isPhaseChange) return true;
+        return Time.time >= phaseChangeStartTime + phaseChangeDuration;
     }
-    public void UpdateState()
+    public void StartChase()
     {
-        if (IsDead) return;
-        // Phase2
-        if (CanTriggerPhase2())
-        {
-            hasTriggeredPhase2 = true;
-            EnterPhase2();
-            return;
-        }
-        // Groggy 1
-        if (CanTriggerFirstGroggy())
-        {
-            hasTriggeredFirstGroggy = true;
-            EnterGroggy();
-            return;
-        }
-        // Groggy 2
-        if (CanTriggerSecondGroggy())
-        {
-            hasTriggeredSecondGroggy = true;
-            EnterGroggy();
-            return;
-        }
+        if (chaseStartTime <= 0f) chaseStartTime = Time.time;
+    }
+    public void ResetChase()
+    {
+        chaseStartTime = 0f;
+    }
+    public bool HasExceededMaxChaseTime()
+    {
+        if (chaseStartTime <= 0f) return false;
+        return Time.time >= chaseStartTime + MaxChaseTime;
     }
 }
