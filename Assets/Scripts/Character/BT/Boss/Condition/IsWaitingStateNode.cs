@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
 
-public class IDLENode : NodeBase
+public class IsWaitingStateNode : NodeBase
 {
     Boss boss;
 
-    public IDLENode(Boss boss)
+    public IsWaitingStateNode(Boss boss)
     {
         this.boss = boss;
     }
     public override NodeState Evaluate()
     {
         if (boss == null) return Return(NodeState.Fail);
-        boss.Movement?.Stop();
-        boss.AnimController?.Float("Speed", 0);
-        return Return(NodeState.Running);
+        return boss.IsWaiting ? Return(NodeState.Success) : Return(NodeState.Fail);
     }
 }

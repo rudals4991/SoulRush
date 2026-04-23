@@ -14,6 +14,7 @@ public class EnterPhaseChangeNode : NodeBase
         if (!boss.CanTriggerPhase2()) return Return(NodeState.Fail);
         boss.SetPhase2Triggered();
         boss.EnterPhaseChangeState();
+        boss.AnimController?.Trigger("PhaseChange");
         return Return(NodeState.Success);
     }
 }

@@ -3,6 +3,7 @@
 public class BossAttack : MonoBehaviour
 {
     Boss boss;
+    [SerializeField] int attackCount;
     public void Initialize(Boss owner)
     { 
         boss = owner;
@@ -10,10 +11,14 @@ public class BossAttack : MonoBehaviour
     public void ExecuteAttack()
     {
         if (boss == null) return;
-        boss.Movement?.Stop();
-        boss.MarkAttackTime();
-        // 공격 애니메이션 실행
-        // 예: boss.Animator.SetTrigger("Attack");
-        // 실제 데미지 판정은 Animation Event에서 히트박스 On/Off 처리
+        boss.EnterAttackState();
+        int attackIndex = Random.Range(0, attackCount);
+        boss.AnimController?.Int("AttackIndex", attackIndex);
+        boss.AnimController?.Trigger("Attack");
+    }
+    public void FinishAttack()
+    {
+        if (boss == null) return;
+        boss.ExitAttackState();
     }
 }

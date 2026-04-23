@@ -1,24 +1,11 @@
 ﻿using UnityEngine;
 
-public class BossAnimController : MonoBehaviour
+public class BossAnimController : AnimControllerBase
 {
-    Animator animator;
-    public void Initialize(Animator animator)
+    public override void Initialize(Animator animator)
     {
+        base.Initialize(animator);
         Debug.Log("Boss Anim Controller is Init");
-        this.animator = animator;
-    }
-    public void Trigger(string trigger)
-    {
-        animator.SetTrigger(trigger);
-    }
-    public void Bool(string name, bool boolean)
-    {
-        animator.SetBool(name, boolean);
-    }
-    public void Float(string name, float f)
-    {
-        animator.SetFloat(name, f);
     }
     public bool IsCurrentStateFinished(int layer = 0)
     {
@@ -30,20 +17,6 @@ public class BossAnimController : MonoBehaviour
     {
         return animator.GetCurrentAnimatorStateInfo(layer).IsName(stateName);
     }
-    public void ResetTrigger(string trigger)
-    {
-        if (animator == null) return;
-        animator.ResetTrigger(trigger);
-    }
-    public void ResetAttackTriggers()
-    {
-        if (animator == null) return;
-
-        animator.ResetTrigger("Attack1");
-        animator.ResetTrigger("Attack2");
-        animator.ResetTrigger("Attack3");
-        animator.ResetTrigger("Attack4");
-    }
     public AnimatorStateInfo GetCurrentStateInfo(int layer = 0)
     {
         return animator.GetCurrentAnimatorStateInfo(layer);
@@ -51,5 +24,31 @@ public class BossAnimController : MonoBehaviour
     public bool IsInTransition(int layer = 0)
     {
         return animator.IsInTransition(layer);
+    }
+    public float GetNormalizedTime(int layer = 0)
+    {
+        return animator.GetCurrentAnimatorStateInfo(layer).normalizedTime % 1f;
+    }
+    public bool IsInNormalizedTimeRange(float start, float end, int layer = 0)
+    {
+        if (animator.IsInTransition(layer)) return false;
+        float normalizedTime = animator.GetCurrentAnimatorStateInfo(layer).normalizedTime % 1f;
+        return normalizedTime >= start && normalizedTime <= end;
+    }
+    public bool IsStateInNormalizedTimeRange(string stateName, float start, float end, int layer = 0)
+    {
+        if (animator.IsInTransition(layer)) return false;
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layer);
+        if (!stateInfo.IsName(stateName)) return false;
+        float normalizedTime = stateInfo.normalizedTime % 1f;
+        return normalizedTime >= start && normalizedTime <= end;
+    }
+    public void ResetTriggers(params string[] triggers)
+    {
+        if (triggers == null) return;
+        foreach (string trigger in triggers)
+        {
+            animator.ResetTrigger(trigger);
+        }
     }
 }

@@ -13,7 +13,7 @@ public class CombatNode : NodeBase
     {
         if (boss == null || boss.Movement == null) return Return(NodeState.Fail);
         boss.Movement.Stop();
-        Debug.Log("CombatNode Running");
+        boss.AnimController?.Float("Speed", 0f);
         boss.Movement.RotateToTarget();
         return Return(NodeState.Running);
     }

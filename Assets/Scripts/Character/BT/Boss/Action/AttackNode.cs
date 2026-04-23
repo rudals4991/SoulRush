@@ -13,6 +13,8 @@ public class AttackNode : NodeBase
         if (boss == null || boss.BossAttack == null) return Return(NodeState.Fail);
         boss.Movement?.Stop();
         boss.Movement?.RotateToTarget();
+        boss.AnimController?.Float("Speed", 0f);
+
         boss.BossAttack.ExecuteAttack();
         return Return(NodeState.Success);
     }
