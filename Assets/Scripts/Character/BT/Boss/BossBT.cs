@@ -78,19 +78,15 @@ public class BossBT : MonoBehaviour
             new ChaseAttackNode(boss)
         });
 
-        NodeBase findTargetSequence = new SequenceNode(new List<NodeBase>
-        {
-            new FindTargetNode(boss),
-            new IDLENode(boss)
-        });
-
+        
+        NodeBase findTargetNode = new FindTargetNode(boss);
         NodeBase idleNode = new IDLENode(boss);
 
         NodeBase combatSelector = new SelectorNode(new List<NodeBase>
         {
             instantAttackSequence,
             chaseAttackSequence,
-            findTargetSequence,
+            findTargetNode,
             idleNode
         });
 

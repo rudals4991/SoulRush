@@ -7,7 +7,6 @@ public class Boss : CharacterBase
 
     protected BossStat bossStat;
 
-    protected float lastAttackTime;
     protected float chaseStartTime;
     protected float groggyStartTime;
     protected float phaseChangeStartTime;
@@ -16,7 +15,6 @@ public class Boss : CharacterBase
     protected bool isGroggy;
     protected bool isPhaseChange;
     protected bool isAttacking;
-    protected float cooldownStartTime;
 
     protected bool isWaiting;
     protected float waitStartTime;
@@ -92,17 +90,9 @@ public class Boss : CharacterBase
         if (target == null) return false;
         return Vector3.Distance(transform.position, target.position) <= StopDistance;
     }
-    public bool CanAttack()
-    {
-        return Time.time >= cooldownStartTime + AttackCooldown;
-    }
-    public void MarkAttackTime()
-    {
-        lastAttackTime = Time.time;
-    }
     public float GetHpRatio()
     {
-        if (bossStat == null || bossStat.baseMaxHp <= 0f) return 0f;
+        if (bossStat == null || bossStat.baseMaxHp <= 0f) return 1f;
         return currentHp / bossStat.baseMaxHp;
     }
     public bool CanTriggerFirstGroggy()
@@ -187,7 +177,7 @@ public class Boss : CharacterBase
     public void ExitAttackState()
     {
         isAttacking = false;
-        cooldownStartTime = Time.time;
+        EnterWaitState();
     }
     public void EnterWaitState()
     {

@@ -14,7 +14,6 @@ public class AttackNode : NodeBase
         boss.Movement?.Stop();
         boss.Movement?.RotateToTarget();
         boss.AnimController?.Float("Speed", 0f);
-
         boss.BossAttack.ExecuteAttack();
         return Return(NodeState.Success);
     }

@@ -3,7 +3,7 @@
 public class BossAttack : MonoBehaviour
 {
     Boss boss;
-    [SerializeField] int attackCount;
+    [SerializeField] int attackCount = 6;
     public void Initialize(Boss owner)
     { 
         boss = owner;

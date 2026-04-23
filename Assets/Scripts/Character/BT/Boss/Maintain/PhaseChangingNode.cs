@@ -13,6 +13,7 @@ public class PhaseChangingNode : NodeBase
         if (boss == null) return Return(NodeState.Fail);
         if (!boss.IsPhaseChanging) return Return(NodeState.Fail);
         boss.Movement?.Stop();
+        boss.AnimController?.Float("Speed", 0f);
         if (boss.IsPhaseChangeFinished())
         {
             boss.ExitPhaseChangeState();
