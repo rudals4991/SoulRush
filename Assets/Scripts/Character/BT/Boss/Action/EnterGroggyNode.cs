@@ -15,6 +15,7 @@ public class EnterGroggyNode : NodeBase
         else if (boss.CanTriggerSecondGroggy()) boss.SetSecondGroggyTriggered();
         else return Return(NodeState.Fail);
         boss.EnterGroggyState();
+        boss.AnimController?.Trigger("Groggy");
         return Return(NodeState.Success);
     }
 }

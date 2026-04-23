@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 077403ea71f14794b9eb114ebb1c8e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Boss
-  stat: {fileID: 11400000, guid: bae09ceae104b3d4794343fbd40bbec1, type: 2}
+  stat: {fileID: 11400000, guid: 25c1b06a4a6e11f4f8e91dfe066a213b, type: 2}
   lockOnPoint: {fileID: 0}
   detectRange: 20
   phaseChangeDuration: 2
@@ -198,3 +198,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e57f4ca15419eb41acb684d000fe382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossAttack
+  attackCount: 6

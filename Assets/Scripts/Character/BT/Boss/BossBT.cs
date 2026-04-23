@@ -52,27 +52,30 @@ public class BossBT : MonoBehaviour
             })
         });
 
-        NodeBase attackSequence = new SequenceNode(new List<NodeBase>
+        NodeBase attackingSelector = new SequenceNode(new List<NodeBase>
+        {
+            new IsAttackingStateNode(boss),
+            new AttackingNode(boss)
+        });
+
+        NodeBase waitingSelector = new SequenceNode(new List<NodeBase>
+        {
+            new IsWaitingStateNode(boss),
+            new WaitNode(boss)
+        });
+
+        NodeBase instantAttackSequence = new SequenceNode(new List<NodeBase>
         {
             new HasTargetNode(boss),
-            new CanAttackNode(boss),
             new IsTargetInAttackRangeNode(boss),
             new AttackNode(boss)
         });
 
-        NodeBase chaseAndAttackSequence = new SequenceNode(new List<NodeBase>
+        NodeBase chaseAttackSequence = new SequenceNode(new List<NodeBase>
         {
             new HasTargetNode(boss),
             new IsTargetOutOfAttackRangeNode(boss),
-            new MoveNode(boss),
-            new CanAttackNode(boss),
-            new AttackNode(boss)
-        });
-
-        NodeBase combatIdleSequence = new SequenceNode(new List<NodeBase>
-        {
-            new HasTargetNode(boss),
-            new CombatNode(boss)
+            new ChaseAttackNode(boss)
         });
 
         NodeBase findTargetSequence = new SequenceNode(new List<NodeBase>
@@ -85,9 +88,8 @@ public class BossBT : MonoBehaviour
 
         NodeBase combatSelector = new SelectorNode(new List<NodeBase>
         {
-            attackSequence,
-            chaseAndAttackSequence,
-            combatIdleSequence,
+            instantAttackSequence,
+            chaseAttackSequence,
             findTargetSequence,
             idleNode
         });
@@ -97,6 +99,8 @@ public class BossBT : MonoBehaviour
             deadSequence,
             groggySelector,
             phaseChangeSelector,
+            attackingSelector,
+            waitingSelector,
             combatSelector
         });
     }

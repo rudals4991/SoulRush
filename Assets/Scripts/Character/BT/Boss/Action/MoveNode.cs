@@ -12,16 +12,17 @@ public class MoveNode : NodeBase
     {
         if (boss == null || boss.Movement == null || !boss.HasTarget()) return Return(NodeState.Fail);
         boss.StartChase();
-        Debug.Log("MoveNode Running");
         if (boss.IsTargetInStopDistance() || boss.HasExceededMaxChaseTime())
         {
             boss.Movement.Stop();
             boss.Movement.RotateToTarget();
+            boss.AnimController?.Float("Speed", 0f);
             boss.ResetChase();
             return Return(NodeState.Success);
         }
         boss.Movement.MoveToTarget();
         boss.Movement.RotateToTarget();
+        boss.AnimController?.Float("Speed", 1f);
         return Return(NodeState.Running);
     }
 }

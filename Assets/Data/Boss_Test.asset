@@ -18,11 +18,11 @@ MonoBehaviour:
   staminaRegen: 0
   baseAttackDamage: 30
   baseGuardPercent: 0
-  attackCooldown: 2
-  attackRange: 5
+  attackCooldown: 4
+  attackRange: 2
   groggyDuration: 3
-  stopDistance: 3
+  stopDistance: 2
   maxChaseTime: 3
   firstGroggyPercent: 0.7
   secondGroggyPercent: 0.3
-  phase2Percent: 0
+  phase2Percent: 0.5

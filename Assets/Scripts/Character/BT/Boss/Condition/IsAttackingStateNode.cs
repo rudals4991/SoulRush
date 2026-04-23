@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
 
-public class IDLENode : NodeBase
+public class IsAttackingStateNode : NodeBase
 {
     Boss boss;
 
-    public IDLENode(Boss boss)
+    public IsAttackingStateNode(Boss boss)
     {
         this.boss = boss;
     }
     public override NodeState Evaluate()
     {
         if (boss == null) return Return(NodeState.Fail);
-        boss.Movement?.Stop();
-        boss.AnimController?.Float("Speed", 0);
-        return Return(NodeState.Running);
+        return boss.IsAttacking ? Return(NodeState.Success) : Return(NodeState.Fail);
     }
 }

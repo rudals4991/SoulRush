@@ -15,6 +15,11 @@ public class Boss : CharacterBase
     protected bool isPhase2;
     protected bool isGroggy;
     protected bool isPhaseChange;
+    protected bool isAttacking;
+    protected float cooldownStartTime;
+
+    protected bool isWaiting;
+    protected float waitStartTime;
 
     protected bool hasTriggeredFirstGroggy;
     protected bool hasTriggeredSecondGroggy;
@@ -24,6 +29,7 @@ public class Boss : CharacterBase
     public BossBT BT { get; private set; }
     public BossMovement Movement { get; private set; }
     public BossAttack BossAttack { get; private set; }
+    public BossAnimController AnimController { get; private set; }
 
     public float DetectRange => detectRange;
     public float AttackRange => bossStat.attackRange;
@@ -37,6 +43,9 @@ public class Boss : CharacterBase
     public bool IsGroggy => isGroggy;
     public bool IsPhaseChanging => isPhaseChange;
     public bool IsPhase2 => isPhase2;
+    public bool IsAttacking => isAttacking;
+    public bool IsWaiting => isWaiting;
+
 
     protected void Awake()
     {
@@ -45,11 +54,15 @@ public class Boss : CharacterBase
     }
     public override void Initialize()
     {
+        base.Initialize();
         Rb = GetComponent<Rigidbody>();
         Animator = GetComponent<Animator>();
         Movement = GetComponent<BossMovement>();
         BossAttack = GetComponent<BossAttack>();
         BT = GetComponent<BossBT>();
+        AnimController = GetComponent<BossAnimController>();
+
+        AnimController.Initialize(Animator);
         Movement.Initialize(this, Rb);
         BossAttack.Initialize(this);
         BT.Initialize(this);
@@ -81,7 +94,7 @@ public class Boss : CharacterBase
     }
     public bool CanAttack()
     {
-        return Time.time >= lastAttackTime + AttackCooldown;
+        return Time.time >= cooldownStartTime + AttackCooldown;
     }
     public void MarkAttackTime()
     {
@@ -164,5 +177,35 @@ public class Boss : CharacterBase
     {
         if (chaseStartTime <= 0f) return false;
         return Time.time >= chaseStartTime + MaxChaseTime;
+    }
+    public void EnterAttackState()
+    {
+        isAttacking = true;
+        Movement?.Stop();
+        AnimController?.Float("Speed", 0f);
+    }
+    public void ExitAttackState()
+    {
+        isAttacking = false;
+        cooldownStartTime = Time.time;
+    }
+    public void EnterWaitState()
+    {
+        isWaiting = true;
+        waitStartTime = Time.time;
+        Movement?.Stop();
+        AnimController?.Float("Speed", 0f);
+    }
+
+    public void ExitWaitState()
+    {
+        isWaiting = false;
+        waitStartTime = 0f;
+    }
+
+    public bool IsWaitFinished()
+    {
+        if (!isWaiting) return true;
+        return Time.time >= waitStartTime + AttackCooldown;
     }
 }

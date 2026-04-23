@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class DeadNode : NodeBase
+public class WaitNode : NodeBase
 {
     Boss boss;
 
-    public DeadNode(Boss boss)
+    public WaitNode(Boss boss)
     {
         this.boss = boss;
     }
@@ -12,8 +12,13 @@ public class DeadNode : NodeBase
     {
         if (boss == null) return Return(NodeState.Fail);
         boss.Movement?.Stop();
+        boss.Movement?.RotateToTarget();
         boss.AnimController?.Float("Speed", 0f);
-        boss.AnimController?.Trigger("Dead");
+        if (boss.IsWaitFinished())
+        {
+            boss.ExitWaitState();
+            return Return(NodeState.Success);
+        }
         return Return(NodeState.Running);
     }
 }
