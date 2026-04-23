@@ -13,6 +13,7 @@ public class GroggyNode : NodeBase
         if (boss == null) return Return(NodeState.Fail);
         if (!boss.IsGroggy) return Return(NodeState.Fail);
         boss.Movement?.Stop();
+        boss.AnimController?.Float("Speed", 0f);
         if (boss.IsGroggyFinished())
         {
             boss.ExitGroggyState();
