@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SmallBoss3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
+      propertyPath: m_TagString
+      value: Monster
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
       propertyPath: m_Controller
       value: 
@@ -74,6 +78,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7091479182063656683}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8589562166997333042}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5873460210022138508}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8730782434717818990}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2635179441977714945}
   m_SourcePrefab: {fileID: 100100000, guid: 71b801ce8debb4946b996e49a516aa39, type: 3}
 --- !u!1 &96824709284061496 stripped
 GameObject:
@@ -130,3 +146,55 @@ CapsuleCollider:
   m_Height: 1.74925
   m_Direction: 1
   m_Center: {x: 0, y: 0.87637013, z: 0}
+--- !u!114 &8589562166997333042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96824709284061496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 077403ea71f14794b9eb114ebb1c8e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Boss
+  stat: {fileID: 11400000, guid: bae09ceae104b3d4794343fbd40bbec1, type: 2}
+  lockOnPoint: {fileID: 0}
+  detectRange: 20
+  phaseChangeDuration: 2
+--- !u!114 &5873460210022138508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96824709284061496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 832e729cea6cf164a9b82bfc18bea387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossBT
+--- !u!114 &8730782434717818990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96824709284061496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40dfb681caae23b41a8c8ef37fa43127, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossMovement
+--- !u!114 &2635179441977714945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96824709284061496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e57f4ca15419eb41acb684d000fe382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAttack

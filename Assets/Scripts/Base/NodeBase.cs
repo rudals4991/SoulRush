@@ -24,5 +24,10 @@ public abstract class NodeBase
         child.parent = this;
         children.Add(child);
     }
+    protected NodeState Return(NodeState state)
+    {
+        currentState = state;
+        return currentState;
+    }
     public abstract NodeState Evaluate();
 }

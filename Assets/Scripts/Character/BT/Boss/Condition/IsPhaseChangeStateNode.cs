@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 
-public class HasTargetNode : NodeBase
+public class IsPhaseChangeStateNode : NodeBase
 {
-    Boss boss;
+    readonly Boss boss;
 
-    public HasTargetNode(Boss boss)
+    public IsPhaseChangeStateNode(Boss boss)
     {
         this.boss = boss;
     }
     public override NodeState Evaluate()
     {
         if (boss == null) return Return(NodeState.Fail);
-        currentState = boss.HasTarget() ? NodeState.Success : NodeState.Fail;
+        currentState = boss.IsPhaseChanging ? NodeState.Success : NodeState.Fail;
         return currentState;
     }
 }

@@ -10,7 +10,7 @@ public class ShouldGroggyNode : NodeBase
     }
     public override NodeState Evaluate()
     {
-        if (boss == null)return NodeState.Fail;
+        if (boss == null) return Return(NodeState.Fail);
         bool canFirstGroggy = boss.CanTriggerFirstGroggy();
         bool canSecondGroggy = boss.CanTriggerSecondGroggy();
         currentState = (canFirstGroggy || canSecondGroggy) ? NodeState.Success : NodeState.Fail;

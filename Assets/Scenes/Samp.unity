@@ -119,26 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &287914328 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 96824709284061496, guid: 516a91acf0d761d4a9ac4a1b3c8283df, type: 3}
-  m_PrefabInstance: {fileID: 7299611125411686360}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &287914333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 287914328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 077403ea71f14794b9eb114ebb1c8e44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Boss
-  stat: {fileID: 11400000, guid: bae09ceae104b3d4794343fbd40bbec1, type: 2}
-  lockOnPoint: {fileID: 0}
-  detectRange: 20
 --- !u!1 &645558603
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,6 +462,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2409832878884741959, guid: 6ea57d3675168594f8127fa5af311b05, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 3042923241146104317, guid: 6ea57d3675168594f8127fa5af311b05, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.94482
@@ -579,13 +563,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8589562166997333042, guid: 516a91acf0d761d4a9ac4a1b3c8283df, type: 3}
+      propertyPath: stat
+      value: 
+      objectReference: {fileID: 11400000, guid: 25c1b06a4a6e11f4f8e91dfe066a213b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 96824709284061496, guid: 516a91acf0d761d4a9ac4a1b3c8283df, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 287914333}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 516a91acf0d761d4a9ac4a1b3c8283df, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
